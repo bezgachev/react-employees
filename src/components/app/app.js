@@ -25,15 +25,7 @@ class App extends Component {
 
     deleteItem = (id) => {
         this.setState(({data}) => {
-            // 1 способ
-            // const index = data.findIndex(elem => elem.id === id);
-            // const before = data.slice(0, index);
-            // const after = data.slice(index + 1);
-            // const newArr = [...before, ...after];
-
-            // 2 способ, конечно, это правильнее
             const newArr = data.filter(item => item.id !== id)
-
             return {
                 data: newArr
             }
@@ -56,45 +48,6 @@ class App extends Component {
         })
     }
 
-    /*
-    onToggleIncrease = (id) => {
-        // 1 способ
-        // this.setState(({data}) => {
-        //     const index = data.findIndex(elem => elem.id === id);
-
-        //     const old = data[index];
-        //     const newItem = {...old, increase: !old.increase};
-        //     const newArr = [...data.slice(0, index), newItem, ...data.slice(index + 1)];
-
-        //     return {
-        //         data: newArr
-        //     }
-        // })
-
-        // 2 способ
-        this.setState(({data}) => ({
-            data: data.map(item => {
-                if (item.id === id) {
-                    return {...item, increase: !item.increase}
-                }
-                return item;
-            })
-        }))
-
-    }
-
-    onToggleRise = (id) => {
-        this.setState(({data}) => ({
-            data: data.map(item => {
-                if (item.id === id) {
-                    return {...item, rise: !item.rise}
-                }
-                return item;
-            })
-        }))
-    }
-    */
- 
     onToggleProp = (id, prop) => {
         this.setState(({data}) => ({
             data: data.map(item => {
@@ -135,6 +88,20 @@ class App extends Component {
         this.setState({filter});
     }
 
+    onUpdateSalary = (id, value) => {
+        if (value <= 0) {
+            return;
+        }
+        this.setState(({data}) => ({
+            data: data.map(item => {
+                if (item.id === id) {
+                    return {...item, salary: value.replace(/\D/g, '')}
+                }
+                return item;
+            })
+        }))
+    }
+
     render() {
         const {data, term, filter}= this.state;
         const employees = this.state.data.length;
@@ -149,17 +116,14 @@ class App extends Component {
                     <SearchPanel onUpdateSearch={this.onUpdateSearch}/>
                     <AppFilter filter={filter} onFilterSelect={this.onFilterSelect}/>
                 </div>
-    
+
                 <EmployeesList
                     data={visibleData}
                     onDelete={id => this.deleteItem(id)}
-
-                    // onToggleIncrease={this.onToggleIncrease}
-                    // onToggleRise={this.onToggleRise}
                     onToggleProp={this.onToggleProp}
+                    onChangeSalary={this.onUpdateSalary}
+                />
 
-                    />
-    
                 <EmployeesAddForm onAdd={this.addItem} employees={employees}/>
     
             </div>
